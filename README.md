@@ -41,12 +41,9 @@ composer require nacosvel/2fa
 ### Generate Secret
 
 ```php
-use Nacosvel\Authenticator\HOTP;
-use Nacosvel\Authenticator\TOTP;
+use Nacosvel\Authenticator\Authentication;
 
-$hotpSecret = HOTP::generateSecret(20, false);
-$totpSecret = TOTP::generateSecret(20, false);
-// string(32) "LWN4DKX2KHW4X7VMSWNIRJVHW4F4SQ4Z"
+$secret = Authentication::generateSecret(20, false);
 // string(32) "RIPPSUOU3EQBR3FXML2QL43SRYGWCKY3"
 ```
 
@@ -56,8 +53,8 @@ $totpSecret = TOTP::generateSecret(20, false);
 use Nacosvel\Authenticator\HOTP;
 use Nacosvel\Authenticator\TOTP;
 
-$hotpToken = HOTP::generateToken($hotpSecret, 30, 6, 'sha1');
-$totpToken = TOTP::generateToken($totpSecret, 30, 6, 'sha1');
+$hotpToken = HOTP::generateToken($secret, 30, 6, 'sha1');
+$totpToken = TOTP::generateToken($secret, 30, 6, 'sha1');
 // string(6) "577349"
 // string(6) "981726"
 ```
@@ -68,8 +65,8 @@ $totpToken = TOTP::generateToken($totpSecret, 30, 6, 'sha1');
 use Nacosvel\Authenticator\HOTP;
 use Nacosvel\Authenticator\TOTP;
 
-$hotpValidate = HOTP::validate($hotpSecret, $hotpToken, 30, 6, 'sha1', 3);
-$totpValidate = TOTP::validate($totpSecret, $totpToken, 30, 6, 'sha1', 3);
+$hotpValidate = HOTP::validate($secret, $hotpToken, 30, 6, 'sha1', 3);
+$totpValidate = TOTP::validate($secret, $totpToken, 30, 6, 'sha1', 3);
 // bool(true)
 // bool(true)
 ```
@@ -80,19 +77,17 @@ $totpValidate = TOTP::validate($totpSecret, $totpToken, 30, 6, 'sha1', 3);
 use Nacosvel\Authenticator\HOTP;
 use Nacosvel\Authenticator\TOTP;
 
-$hotpURI = HOTP::getAuthUri($hotpSecret, 'Mr.Alex', 'Github', 30, 6, 'sha1')->toString();
-$totpURI = TOTP::getAuthUri($totpSecret, 'Mr.Alex', 'Github', 30, 6, 'sha1')->toString();
+$hotpURI = HOTP::buildURI($secret, 'Mr.Alex', 'Github', 30, 6, 'sha1')->toString();
+$totpURI = TOTP::buildURI($secret, 'Mr.Alex', 'Github', 30, 6, 'sha1')->toString();
 // string(118) "otpauth://hotp/Github:Mr.Alex?secret=LWN4DKX2KHW4X7VMSWNIRJVHW4F4SQ4Z&counter=30&digits=6&algorithm=sha1&issuer=Github"
 // string(117) "otpauth://totp/Github:Mr.Alex?secret=RIPPSUOU3EQBR3FXML2QL43SRYGWCKY3&period=30&digits=6&algorithm=sha1&issuer=Github"
-
-$hotpURI = HOTP::generateURI('hotp', 'Mr.Alex', 'Github')->secret($hotpSecret)->toString();
-$totpURI = TOTP::generateURI('totp', 'Mr.Alex', 'Github')->secret($totpSecret)->toString();
-// string(83) "otpauth://hotp/Github:Mr.Alex?secret=LWN4DKX2KHW4X7VMSWNIRJVHW4F4SQ4Z&issuer=Github"
-// string(83) "otpauth://totp/Github:Mr.Alex?secret=RIPPSUOU3EQBR3FXML2QL43SRYGWCKY3&issuer=Github"
 ```
 
-### URI
+### URI::fromString
+
 ```php
+use Nacosvel\Authenticator\URI;
+
 $uri = URI::fromString('otpauth://totp/Github:Mr.Alex?secret=RIPPSUOU3EQBR3FXML2QL43SRYGWCKY3&period=30&digits=6&algorithm=sha1&issuer=Github');
 var_dump([
     'type'      => $uri->getType(),     // totp
@@ -102,17 +97,16 @@ var_dump([
     'digits'    => $uri->getDigits(),   // 6
     'algorithm' => $uri->getAlgorithm(),// sha1
 ]);
+```
 
-$url = new URI(
-    $uri->getType(),
-    $uri->getIssuer(),
-    $uri->getAccount(),
-    [
-        'secret' => $uri->getSecret(),
-    ]
-);
+### URI::buildURI
 
-var_dump($url->toString());
+```php
+use Nacosvel\Authenticator\URI;
+
+$hotpURI = URI::buildURI('hotp', 'Mr.Alex', 'Github')->secret($secret)->toString();
+$totpURI = URI::buildURI('totp', 'Mr.Alex', 'Github')->secret($secret)->toString();
+// string(83) "otpauth://hotp/Github:Mr.Alex?secret=LWN4DKX2KHW4X7VMSWNIRJVHW4F4SQ4Z&issuer=Github"
 // string(83) "otpauth://totp/Github:Mr.Alex?secret=RIPPSUOU3EQBR3FXML2QL43SRYGWCKY3&issuer=Github"
 ```
 
