@@ -104,9 +104,9 @@ class TOTP extends Authentication implements Contracts\Authentication
      *
      * @return URI
      */
-    public static function getAuthUri(string $secret, string $account, string $issuer = null, int $period = 30, int $digits = 6, string $algo = 'sha1'): URI
+    public static function buildURI(string $secret, string $account, string $issuer = null, int $period = 30, int $digits = 6, string $algo = 'sha1'): URI
     {
-        return self::generateURI('totp', $account, $issuer)->push([
+        return URI::buildURI('totp', $account, $issuer)->push([
             'secret'    => $secret,
             'period'    => $period,
             'digits'    => $digits,

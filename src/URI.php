@@ -233,7 +233,7 @@ class URI implements Stringable
      *
      * @return static
      */
-    public static function fromString(string $uri, string $defaultScheme = 'otpauth'): self
+    public static function fromString(string $uri, string $defaultScheme = 'otpauth'): static
     {
         ($urls = parse_url($uri)) || throw new InvalidArgumentException('Invalid URI.');
 
@@ -266,6 +266,24 @@ class URI implements Stringable
         );
 
         return new self($host, $issuer, $account, $params, $scheme);
+    }
+
+    /**
+     * Generate a new URI instance for a given account and type.
+     *
+     * This factory method creates a URI object with the specified type, account,
+     *  optional issuer, and additional options.
+     *
+     * @param string      $type    The type of the URI (e.g., 'totp' or 'hotp').
+     * @param string      $account The account name or identifier.
+     * @param string|null $issuer  Optional issuer or service provider name.
+     * @param array       $options Additional options for the URI (e.g., secret, algorithm, digits, period).
+     *
+     * @return static
+     */
+    public static function buildURI(string $type, string $account, string $issuer = null, array $options = []): static
+    {
+        return new self($type, $issuer, $account, $options);
     }
 
     public function toString(): string

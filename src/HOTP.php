@@ -98,9 +98,9 @@ class HOTP extends Authentication implements Contracts\Authentication
      *
      * @return URI
      */
-    public static function getAuthUri(string $secret, string $account, string $issuer = null, int $period = 0, int $digits = 6, string $algo = 'sha1'): URI
+    public static function buildURI(string $secret, string $account, string $issuer = null, int $period = 0, int $digits = 6, string $algo = 'sha1'): URI
     {
-        return self::generateURI('hotp', $account, $issuer)->push([
+        return URI::buildURI('hotp', $account, $issuer)->push([
             'secret'    => $secret,
             'counter'   => $period,
             'digits'    => $digits,

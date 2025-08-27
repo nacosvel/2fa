@@ -104,22 +104,4 @@ abstract class Authentication
 
         return $token;
     }
-
-    /**
-     * Generate a new URI instance for a given account and type.
-     *
-     * This factory method creates a URI object with the specified type, account,
-     *  optional issuer, and additional options.
-     *
-     * @param string      $type    The type of the URI (e.g., 'totp' or 'hotp').
-     * @param string      $account The account name or identifier.
-     * @param string|null $issuer  Optional issuer or service provider name.
-     * @param array       $options Additional options for the URI (e.g., secret, algorithm, digits, period).
-     *
-     * @return URI
-     */
-    public static function generateURI(string $type, string $account, string $issuer = null, array $options = []): URI
-    {
-        return new URI($type, $issuer, $account, $options);
-    }
 }
