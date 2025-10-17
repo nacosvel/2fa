@@ -263,7 +263,7 @@ class URI implements Contracts\URI
             "Invalid URI: invalid `secret` field."
         );
 
-        return new self($host, $issuer, $account, $params, $scheme);
+        return new static($host, $issuer, $account, $params, $scheme);
     }
 
     /**
@@ -281,7 +281,12 @@ class URI implements Contracts\URI
      */
     public static function buildURI(string $type, string $account, string $issuer = null, array $options = []): static
     {
-        return new self($type, $issuer, $account, $options);
+        if (class_exists($type)) {
+            $type = basename(str_replace('\\', '/', $type));
+            $type = strtolower($type);
+        }
+
+        return new static($type, $issuer, $account, $options);
     }
 
     /**

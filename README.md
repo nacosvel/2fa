@@ -103,9 +103,11 @@ var_dump([
 
 ```php
 use Nacosvel\Authenticator\URI;
+use Nacosvel\Authenticator\HOTP;
+use Nacosvel\Authenticator\TOTP;
 
-$hotpURI = URI::buildURI(URI::HOTP, 'Mr.Alex', 'Github')->secret($secret)->toString();
-$totpURI = URI::buildURI(URI::TOTP, 'Mr.Alex', 'Github')->secret($secret)->toString();
+$hotpURI = URI::buildURI(HOTP::class, 'Mr.Alex', 'Github')->secret($secret)->toString();
+$totpURI = URI::buildURI(TOTP::class, 'Mr.Alex', 'Github')->secret($secret)->toString();
 // string(83) "otpauth://hotp/Github:Mr.Alex?secret=LWN4DKX2KHW4X7VMSWNIRJVHW4F4SQ4Z&issuer=Github"
 // string(83) "otpauth://totp/Github:Mr.Alex?secret=RIPPSUOU3EQBR3FXML2QL43SRYGWCKY3&issuer=Github"
 ```
