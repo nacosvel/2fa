@@ -3,18 +3,16 @@
 namespace Nacosvel\Authenticator;
 
 use InvalidArgumentException;
-use Stringable;
 
-class URI implements Stringable
+class URI implements Contracts\URI
 {
     public function __construct(
-        protected string  $type,
+        protected string $type,
         protected ?string $issuer,
-        protected string  $account,
-        protected array   $query = [],
-        protected string  $scheme = 'otpauth',
-    )
-    {
+        protected string $account,
+        protected array $query = [],
+        protected string $scheme = 'otpauth',
+    ) {
         $this->query = array_filter(
             array_merge($query, compact('issuer')),
             static fn($v) => is_null($v) === false
@@ -208,7 +206,7 @@ class URI implements Stringable
     public function push(string|array $key, mixed $value = null): static
     {
         $this->query = (is_array($key) ? $key : [$key => $value]) + $this->query;
-        // $this->query = array_replace($this->query, is_array($key) ? $key : [$key => $value]);
+
         return $this;
     }
 
@@ -286,11 +284,24 @@ class URI implements Stringable
         return new self($type, $issuer, $account, $options);
     }
 
+    /**
+     * allows a class to decide how it will react when it is treated like a string.
+     *
+     * @return string
+     */
     public function toString(): string
     {
         return $this->__toString();
     }
 
+    /**
+     * Magic method {@see https://www.php.net/manual/en/language.oop5.magic.php#object.tostring}
+     * allows a class to decide how it will react when it is treated like a string.
+     *
+     * @return string Returns string representation of the object that
+     * implements this interface (and/or "__toString" magic method).
+     */
+    #[\Override]
     public function __toString(): string
     {
         $query = array_filter($this->getQuery(), static fn($v) => $v !== null && $v !== '');
